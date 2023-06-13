@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base image
-FROM node:14
+FROM node:18-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -13,8 +13,11 @@ RUN npm ci
 # Copy the rest of the application code to the working directory
 COPY . .
 
+# Build nextjs app
+RUN npm run build
+
 # Expose the port the app will run on
-EXPOSE 3001
+EXPOSE 8080
 
 # Start the application
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]

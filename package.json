@@ -6,7 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p 8080",
-    "lint": "next lint"
+    "lint": "next lint",
+    "docker:build": "docker build -t gcr.io/ai-notes-hackathon/app .",
+    "docker:push": "docker push gcr.io/ai-notes-hackathon/app",
+    "gcp:deploy": "gcloud config set project ai-notes-hackathon && gcloud run deploy app --image gcr.io/ai-notes-hackathon/app --platform managed --region us-central1 --port 8080",
+    "pipeline:deploy": "docker build -t gcr.io/ai-notes-hackathon/app . && docker push gcr.io/ai-notes-hackathon/app && gcloud config set project ai-notes-hackathon && gcloud run deploy app --image gcr.io/ai-notes-hackathon/app --platform managed --region us-central1 --port 8080"
   },
   "dependencies": {
     "@codemirror/legacy-modes": "^6.3.2",
