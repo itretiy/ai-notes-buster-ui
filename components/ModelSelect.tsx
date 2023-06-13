@@ -1,14 +1,14 @@
-import { OpenAIModel } from '@/types/types';
+import { LLMTypes } from '@/types/types';
 import { FC } from 'react';
 
 interface Props {
-  model: OpenAIModel;
-  onChange: (model: OpenAIModel) => void;
+  model: LLMTypes;
+  onChange: (model: LLMTypes) => void;
 }
 
 export const ModelSelect: FC<Props> = ({ model, onChange }) => {
   const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    onChange(e.target.value as OpenAIModel);
+    onChange(e.target.value as LLMTypes);
   };
 
   return (
@@ -18,7 +18,7 @@ export const ModelSelect: FC<Props> = ({ model, onChange }) => {
       onChange={handleChange}
     >
       <option value="gpt-3.5-turbo">GPT-3.5</option>
-      <option value="gpt-4">GPT-4</option>
+      <option value="gpt-4">MPT-7B</option>
     </select>
   );
 };

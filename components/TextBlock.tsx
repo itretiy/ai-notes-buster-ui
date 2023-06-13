@@ -4,6 +4,7 @@ interface Props {
   onChange?: (value: string) => void;
 }
 
+// TODO add Copy button from CodeBlock
 export const TextBlock: React.FC<Props> = ({
   text,
   editable = false,

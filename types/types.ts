@@ -1,13 +1,14 @@
-export type OpenAIModel = 'gpt-3.5-turbo' | 'gpt-4';
+export type LLMTypes = 'gpt-3.5-turbo';
 
-export interface TranslateBody {
+// TODO adjust according to the api
+export interface GenerateBody {
   inputLanguage: string;
   outputLanguage: string;
   inputCode: string;
-  model: OpenAIModel;
+  model: LLMTypes;
   apiKey: string;
 }
 
-export interface TranslateResponse {
-  code: string;
+export interface GenerateResponse {
+  text: string;
 }
