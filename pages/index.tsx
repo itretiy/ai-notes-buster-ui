@@ -9,7 +9,7 @@ export default function Home() {
   const [meetingNotes, setMeetingNotes] = useState<string>('');
   const [model, setModel] = useState<LLMTypes>('gpt-3.5-turbo');
   const [loading, setLoading] = useState<boolean>(false);
-  const [isGenerated, setHasGenerated] = useState<boolean>(true);
+  const [isGenerated, setHasGenerated] = useState<boolean>(false);
 
   const handleTranslate = async () => {
     // TODO implement
