@@ -1,14 +1,12 @@
 export type LLMTypes = 'gpt-3.5-turbo';
 
-// TODO adjust according to the api
 export interface GenerateBody {
-  inputLanguage: string;
-  outputLanguage: string;
-  inputCode: string;
-  model: LLMTypes;
-  apiKey: string;
+  llm_type: LLMTypes;
+  transcript: string;
+  number_of_bullet_points: number;
 }
 
+// TODO adjust according to response format
 export interface GenerateResponse {
   text: string;
 }

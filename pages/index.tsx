@@ -3,98 +3,73 @@ import { TextBlock } from '@/components/TextBlock';
 import { LLMTypes, GenerateBody } from '@/types/types';
 import Head from 'next/head';
 import { useState } from 'react';
+import Slider from 'rc-slider';
+import 'rc-slider/assets/index.css';
 
 export default function Home() {
   const [transcript, setTranscript] = useState<string>('');
   const [meetingNotes, setMeetingNotes] = useState<string>('');
   const [model, setModel] = useState<LLMTypes>('gpt-3.5-turbo');
+  const [bulletPointsCount, setBulletPointsCount] = useState<number>(3);
   const [loading, setLoading] = useState<boolean>(false);
   const [isGenerated, setHasGenerated] = useState<boolean>(false);
+  const [isDraggingBullets, setDraggingBullets] = useState<boolean>(false);
+  const [hasCopyText, setHasCopyText] = useState<boolean>(false);
 
   const handleTranslate = async () => {
-    // TODO implement
-    alert('TODO implement');
-    setMeetingNotes(transcript);
-    copyToClipboard(transcript);
-    setHasGenerated(true);
-    // const maxCodeLength = model === 'gpt-3.5-turbo' ? 6000 : 12000;
-
-    // if (!apiKey) {
-    //   alert('Please enter an API key.');
-    //   return;
-    // }
-
-    // if (inputLanguage === outputLanguage) {
-    //   alert('Please select different languages.');
-    //   return;
-    // }
-
-    // if (!inputCode) {
-    //   alert('Please enter some code.');
-    //   return;
-    // }
-
-    // if (inputCode.length > maxCodeLength) {
-    //   alert(
-    //     `Please enter code less than ${maxCodeLength} characters. You are currently at ${inputCode.length} characters.`,
-    //   );
-    //   return;
-    // }
-
-    // setLoading(true);
-    // setOutputCode('');
-
-    // const controller = new AbortController();
-
-    // const body: TranslateBody = {
-    //   inputLanguage,
-    //   outputLanguage,
-    //   inputCode,
-    //   model,
-    //   apiKey,
-    // };
-
-    // const response = await fetch('/api/translate', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   signal: controller.signal,
-    //   body: JSON.stringify(body),
-    // });
-
-    // if (!response.ok) {
-    //   setLoading(false);
-    //   alert('Something went wrong.');
-    //   return;
-    // }
-
-    // const data = response.body;
-
-    // if (!data) {
-    //   setLoading(false);
-    //   alert('Something went wrong.');
-    //   return;
-    // }
-
-    // const reader = data.getReader();
-    // const decoder = new TextDecoder();
-    // let done = false;
-    // let code = '';
-
-    // while (!done) {
-    //   const { value, done: doneReading } = await reader.read();
-    //   done = doneReading;
-    //   const chunkValue = decoder.decode(value);
-
-    //   code += chunkValue;
-
-    //   setOutputCode((prevCode) => prevCode + chunkValue);
-    // }
-
-    // setLoading(false);
-    // setHasTranslated(true);
-    // copyToClipboard(code);
+    if (!transcript) {
+      alert('Please place Transcript into the left panel!');
+      return;
+    }
+    setLoading(true);
+    setHasGenerated(false);
+    setHasCopyText(false);
+    setMeetingNotes('');
+    try {
+      const timeout = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+      await timeout(5000);
+      const responseText = `Meeting Notes will be placed here:\n${Array.from(Array(bulletPointsCount)).map((e,i)=> `Bullet point ${i+1}`).join('\n')}`;
+      // const body: GenerateBody = {
+      //   llm_type: model,
+      //   transcript,
+      //   number_of_bullet_points: bulletPointsCount,
+      // }; 
+  
+      // const response = await fetch(`${process.env.API_URL || 'https://api-jpkydxa3oq-uc.a.run.app'}/todo`, {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify(body),
+      // });
+  
+      // if (!response.ok) {
+      //   setLoading(false);
+      //   alert('Something went wrong.');
+      //   return;
+      // }
+  
+      // const responseText = await response.text();
+      // console.log('===> response', response)
+  
+      // if (!responseText) {
+      //   setLoading(false);
+      //   alert('Something went wrong!');
+      //   return;
+      // }
+  
+      setMeetingNotes(responseText);
+      copyToClipboard(responseText);
+      setHasGenerated(true);
+      setHasCopyText(true);
+      setTimeout(() => {
+        setHasCopyText(false);
+      }, 2000);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      alert('Something went wrong!');
+    }
   };
 
   const copyToClipboard = (text: string) => {
@@ -112,7 +87,7 @@ export default function Home() {
         <title>AI Notes Busters</title>
         <meta
           name="description"
-          content="Use AI to translate code from one language to another."
+          content="Use AI to generate meeting notes from transcript."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -134,12 +109,34 @@ export default function Home() {
           </button>
         </div>
 
+        <div className="mt-3 pl-[45px] w-[200px]">
+          <Slider
+            startPoint={1}
+            min={3}
+            max={10}
+            defaultValue={bulletPointsCount}
+            value={bulletPointsCount}
+            onChange={(value) => {
+              setBulletPointsCount(value as number);
+            }}
+            onBeforeChange={() => {
+              setDraggingBullets(true);
+            }}
+            onAfterChange={() => {
+              setDraggingBullets(false);
+            }}
+            trackStyle={{ backgroundColor: 'rgb(139 92 246 / 0.8)', height: 5 }}
+            railStyle={{ backgroundColor: '#E5E5E5', height: 5 }}
+            handleStyle={{ backgroundColor: '#E5E5E5', borderWidth: '3px', borderColor: 'rgb(139 92 246)', opacity: 1, boxShadow: isDraggingBullets ? '0 0 0 5px rgb(139 92 246 / 0.6)' : 'none' }}
+          />
+        </div>
+
         <div className="mt-2 text-center text-xs">
           {loading
             ? 'Generating...'
-            : isGenerated
+            : hasCopyText
             ? 'Meeting Notes copied to clipboard (edit as needed)!'
-            : 'Place Transcript to the left panel and click "Generate"'}
+            : 'Place Transcript into the left panel, adjust bullet points count and click "Generate"'}
         </div>
 
         <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
@@ -151,14 +148,16 @@ export default function Home() {
               editable={!loading}
               onChange={(value) => {
                 setTranscript(value);
-                // TODO check whether it is ok to clear on change here
-                setMeetingNotes('');
                 setHasGenerated(false);
               }}
+              canCopy={false}
             />
           </div>
           <div className="mt-8 flex h-full flex-col justify-center space-y-2 sm:mt-0 sm:w-2/4">
-            <div className="text-center text-xl font-bold">Meeting Notes</div>
+            <div className="text-center text-xl font-bold">
+              Meeting Notes
+              <span className="text-violet-500"> with {bulletPointsCount} bullet points</span>
+            </div>
 
             <TextBlock
               text={meetingNotes}
@@ -166,6 +165,7 @@ export default function Home() {
               onChange={(value) => {
                 setMeetingNotes(value);
               }}
+              canCopy={isGenerated}
             />
           </div>
         </div>
