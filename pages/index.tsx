@@ -29,7 +29,7 @@ export default function Home() {
       const body: GenerateBody = {
         llm_type: model,
         transcript,
-        number_of_bullet_points: bulletPointsCount,
+        num_bullet_points: bulletPointsCount,
       }; 
   
       const response = await fetch(`${process.env.API_URL || 'https://api-jpkydxa3oq-uc.a.run.app'}/summarize`, {
