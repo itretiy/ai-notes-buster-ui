@@ -32,7 +32,7 @@ export default function Home() {
         number_of_bullet_points: bulletPointsCount,
       }; 
   
-      const response = await fetch(`${process.env.API_URL}/summarize`, {
+      const response = await fetch(`${process.env.API_URL || 'https://api-jpkydxa3oq-uc.a.run.app'}/summarize`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
