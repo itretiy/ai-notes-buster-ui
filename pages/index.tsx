@@ -9,7 +9,7 @@ import 'rc-slider/assets/index.css';
 export default function Home() {
   const [transcript, setTranscript] = useState<string>('');
   const [meetingNotes, setMeetingNotes] = useState<string>('');
-  const [model, setModel] = useState<LLMTypes>('gpt-3.5-turbo');
+  const [model, setModel] = useState<LLMTypes>('openai');
   const [bulletPointsCount, setBulletPointsCount] = useState<number>(3);
   const [loading, setLoading] = useState<boolean>(false);
   const [isGenerated, setHasGenerated] = useState<boolean>(false);
@@ -26,37 +26,33 @@ export default function Home() {
     setHasCopyText(false);
     setMeetingNotes('');
     try {
-      const timeout = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-      await timeout(5000);
-      const responseText = `Meeting Notes will be placed here:\n${Array.from(Array(bulletPointsCount)).map((e,i)=> `Bullet point ${i+1}`).join('\n')}`;
-      // const body: GenerateBody = {
-      //   llm_type: model,
-      //   transcript,
-      //   number_of_bullet_points: bulletPointsCount,
-      // }; 
+      const body: GenerateBody = {
+        llm_type: model,
+        transcript,
+        number_of_bullet_points: bulletPointsCount,
+      }; 
   
-      // const response = await fetch(`${process.env.API_URL || 'https://api-jpkydxa3oq-uc.a.run.app'}/todo`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify(body),
-      // });
+      const response = await fetch(`${process.env.API_URL}/summarize`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(body),
+      });
   
-      // if (!response.ok) {
-      //   setLoading(false);
-      //   alert('Something went wrong.');
-      //   return;
-      // }
+      if (!response.ok) {
+        setLoading(false);
+        alert('Something went wrong.');
+        return;
+      }
   
-      // const responseText = await response.text();
-      // console.log('===> response', response)
+      const responseText = await response.text();
   
-      // if (!responseText) {
-      //   setLoading(false);
-      //   alert('Something went wrong!');
-      //   return;
-      // }
+      if (!responseText) {
+        setLoading(false);
+        alert('Something went wrong!');
+        return;
+      }
   
       setMeetingNotes(responseText);
       copyToClipboard(responseText);

@@ -1,4 +1,4 @@
-export type LLMTypes = 'gpt-3.5-turbo';
+export type LLMTypes = 'openai';
 
 export interface GenerateBody {
   llm_type: LLMTypes;
