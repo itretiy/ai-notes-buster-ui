@@ -3,13 +3,14 @@ import { TextBlock } from '@/components/TextBlock';
 import { LLMTypes, GenerateBody } from '@/types/types';
 import Head from 'next/head';
 import { useState } from 'react';
+import { Bars } from 'react-loader-spinner'
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 
 export default function Home() {
   const [transcript, setTranscript] = useState<string>('');
   const [meetingNotes, setMeetingNotes] = useState<string>('');
-  const [model, setModel] = useState<LLMTypes>('openai');
+  const [model, setModel] = useState<LLMTypes>('gpt-3');
   const [bulletPointsCount, setBulletPointsCount] = useState<number>(3);
   const [loading, setLoading] = useState<boolean>(false);
   const [isGenerated, setHasGenerated] = useState<boolean>(false);
@@ -32,7 +33,7 @@ export default function Home() {
         num_bullet_points: bulletPointsCount,
       }; 
   
-      const response = await fetch(`${process.env.API_URL || 'https://api-jpkydxa3oq-uc.a.run.app'}/summarize`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/summarize`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +89,7 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10">
+      <div className="flex h-full min-h-screen flex-col items-center bg-[#0E1117] px-4 pb-20 text-neutral-200 sm:px-10" style={{ background: 'url(https://www.fluxon.com/static/images/ContactBg.png) center center / cover no-repeat #0E1117'}}>
         <div className="mt-10 flex flex-col items-center justify-center sm:mt-20">
           <div className="text-4xl font-bold">AI Notes Busters</div>
         </div>
@@ -127,12 +128,23 @@ export default function Home() {
           />
         </div>
 
-        <div className="mt-2 text-center text-xs">
-          {loading
-            ? 'Generating...'
-            : hasCopyText
+        <div className="mt-2 text-center text-xs h-[40px]">
+          {loading && (
+            <Bars
+              height="40"
+              width="80"
+              color="#8b5cf6"
+              ariaLabel="bars-loading"
+              wrapperStyle={{ 'justify-content': 'center' }}
+              wrapperClass=""
+              visible={true}
+            />
+          )}
+          {!loading
+            ? hasCopyText
             ? 'Meeting Notes copied to clipboard (edit as needed)!'
-            : 'Place Transcript into the left panel, adjust bullet points count and click "Generate"'}
+            : 'Place Transcript into the left panel, adjust bullet points count and click "Generate"'
+            : ''}
         </div>
 
         <div className="mt-6 flex w-full max-w-[1200px] flex-col justify-between sm:flex-row sm:space-x-4">
@@ -162,6 +174,7 @@ export default function Home() {
                 setMeetingNotes(value);
               }}
               canCopy={isGenerated}
+              isResult
             />
           </div>
         </div>
