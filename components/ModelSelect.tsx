@@ -18,6 +18,9 @@ export const ModelSelect: FC<Props> = ({ model, onChange }) => {
       onChange={handleChange}
     >
       <option value="gpt-3">GPT-3</option>
+      <option value="anthropic">Anthropic</option>
+      <option value="cohere">Cohere</option>
+      <option value="a-21">A21Labs</option>
       <option value="falcon-40b">Falcon-40B</option>
     </select>
   );

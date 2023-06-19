@@ -1,4 +1,4 @@
-export type LLMTypes = 'gpt-3' | 'falcon-40b';
+export type LLMTypes = 'gpt-3' | 'anthropic' | 'cohere' | 'a-21' | 'falcon-40b';
 
 export interface GenerateBody {
   llm_type: LLMTypes;
